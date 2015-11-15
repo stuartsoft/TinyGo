@@ -76,4 +76,23 @@ public class Board {
         //or the position specified does not exist
     }
 
+    public Vector2 CountPieces()//returns a vector of the black pieces and white pieces 
+    {
+        int b = 0;
+        int w = 0;
+
+        for (int i = 0; i < pieceMatrix.Count; i++)
+        {
+            for (int j = 0; j < pieceMatrix[i].Count; j++)
+            {
+                if (pieceMatrix[i][j].color == Constants.BLACKCOLOR)
+                    b++;
+                else if (pieceMatrix[i][j].color == Constants.WHITECOLOR)
+                    w++;
+            }
+        }
+
+        return new Vector2(b, w);
+    }
+
 }
