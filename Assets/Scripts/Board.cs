@@ -60,4 +60,20 @@ public class Board {
         return Liberties;
     }
 
+    public bool PlayPiece(int r, int c, Color color)
+    {
+        if (r > 0 && c > 0 && r < pieceMatrix.Count && c < pieceMatrix.Count)
+        {
+            if (pieceMatrix[r][c].color == Constants.CLEARCOLOR)
+            {
+                pieceMatrix[r][c] = new Piece(new Vector2(r, c), color);
+                return true;
+            }
+        }
+
+        return false;
+        //Action could not be completed, either there is already a piece in the position specified,
+        //or the position specified does not exist
+    }
+
 }
