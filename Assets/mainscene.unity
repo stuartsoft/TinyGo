@@ -114,6 +114,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BoardTilePrefab: {fileID: 184398, guid: 652476066e73ff84596d21a7f2ec2770, type: 2}
   BoardClickPrefab: {fileID: 184398, guid: 60cabcde6cf944d43b49fd9f21c63c30, type: 2}
+  PiecePrefab: {fileID: 113348, guid: ed8446f93ffe037419cc303b5f445fb2, type: 2}
   tileSpacing: .100000001
 --- !u!4 &704375195
 Transform:
@@ -207,8 +208,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1717604364}
-  m_LocalRotation: {x: .382683456, y: 0, z: 0, w: .923879504}
-  m_LocalPosition: {x: 0, y: 4, z: -5}
+  m_LocalRotation: {x: .522498608, y: 0, z: 0, w: .852640152}
+  m_LocalPosition: {x: 0, y: 5, z: -3.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

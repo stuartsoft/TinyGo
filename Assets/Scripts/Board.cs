@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class Board {
     public List<List<Piece>> pieceMatrix;
+    public int CurrentTurn { get; private set; }//0 for black, 1 for white
 
     public int boardSize {
         get { return pieceMatrix.Count; } }
@@ -12,6 +13,7 @@ public class Board {
     public Board(int d)
     {
         pieceMatrix = new List<List<Piece>>();
+        CurrentTurn = 0;
         for (int i = 0; i < d; i++)
         {
             List<Piece> temp = new List<Piece>();
@@ -70,6 +72,7 @@ public class Board {
             if (pieceMatrix[r][c].color == Constants.CLEARCOLOR)
             {
                 pieceMatrix[r][c] = new Piece(new Vector2(r, c), color);
+                CurrentTurn = (CurrentTurn == 0) ? 1 : 0;
                 return true;
             }
         }

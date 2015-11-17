@@ -9,8 +9,10 @@ public class BoardPrefab : MonoBehaviour {
     public Player Player2;
     public GameObject BoardTilePrefab;
     public GameObject BoardClickPrefab;
+    public GameObject PiecePrefab;
     List<List<GameObject>> BoardTiles;
     List<List<GameObject>> BoardClickTiles;
+    List<GameObject> BoardPieces;
     GameObject BoardBackground;
 
     public float tileSpacing = 0.1f;
@@ -21,9 +23,11 @@ public class BoardPrefab : MonoBehaviour {
         Player1 = new Player(Constants.BLACKCOLOR, mainBoard, false);
         Player2 = new Player(Constants.WHITECOLOR, mainBoard, false);
 
+        BoardPieces = new List<GameObject>();
+
+        //create regular board tiles
         BoardTiles = new List<List<GameObject>>();
         float tileSize = 1.0f;
-        //Debug.Log(tileScale);
         for (int i = 0; i < mainBoard.boardSize-1; i++)
         {
             List<GameObject> row = new List<GameObject>();
@@ -50,6 +54,7 @@ public class BoardPrefab : MonoBehaviour {
             BoardTiles.Add(row);
         }
 
+        //create board background, giving the illusion of lines
         BoardBackground = Instantiate(BoardTilePrefab, Vector3.zero, Quaternion.identity) as GameObject;
         float backgroundSize = (tileSize / 10.0f) * mainBoard.boardSize;
         BoardBackground.transform.position = new Vector3(BoardBackground.transform.position.x, -0.01f, BoardBackground.transform.position.z);
@@ -58,9 +63,8 @@ public class BoardPrefab : MonoBehaviour {
         rend.enabled = true;
         rend.material.color = Constants.BLACKCOLOR;
 
-        //create click panels
+        //now create click panels, offset so that clickable panels will be right on top of the line intersections
         BoardClickTiles = new List<List<GameObject>>();
-
         for (int i = 0; i < mainBoard.boardSize; i++)
         {
             List<GameObject> row = new List<GameObject>();
@@ -103,6 +107,20 @@ public class BoardPrefab : MonoBehaviour {
                 if (tok[0] == "ClickPanel")
                 {
                     Debug.Log(tok[1] + ", " + tok[3]);
+                    GameObject tempPiece = Instantiate(PiecePrefab, Vector3.zero, Quaternion.identity) as GameObject;
+                    tempPiece.transform.parent = transform;
+                    tempPiece.transform.position = new Vector3(hit.transform.position.x, 0.16f, hit.transform.position.z);
+                    BoardPieces.Add(tempPiece);
+
+                    if (mainBoard.CurrentTurn == 0)
+                        mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.BLACKCOLOR);
+                    else
+                    {
+                        mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.WHITECOLOR);
+                        Renderer rend = tempPiece.GetComponent<Renderer>();
+                        rend.enabled = true;
+                        rend.material.color = Constants.WHITECOLOR;
+                    }
                 }
             }
         }
