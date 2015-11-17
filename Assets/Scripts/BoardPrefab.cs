@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class BoardPrefab : MonoBehaviour {
     public Board mainBoard;
@@ -90,14 +91,19 @@ public class BoardPrefab : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetMouseButtonDown(0))
-        {
+        if (Input.GetMouseButtonDown(0)){
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
-            {
-                Debug.Log(hit.transform.gameObject.name);
+            if (Physics.Raycast(ray, out hit)){
+                string GameObjName = hit.transform.gameObject.name;
 
+                string[] delimiters = { ",", " " };
+                string[] tok = GameObjName.Split(delimiters, StringSplitOptions.None);
+
+                if (tok[0] == "ClickPanel")
+                {
+                    Debug.Log(tok[1] + ", " + tok[3]);
+                }
             }
         }
     }
