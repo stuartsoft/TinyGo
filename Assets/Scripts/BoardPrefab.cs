@@ -7,7 +7,9 @@ public class BoardPrefab : MonoBehaviour {
     public Player Player1;
     public Player Player2;
     public GameObject BoardTilePrefab;
+    public GameObject BoardClickPrefab;
     List<List<GameObject>> BoardTiles;
+    List<List<GameObject>> BoardClickTiles;
     GameObject BoardBackground;
 
     public float tileSpacing = 0.1f;
@@ -41,6 +43,7 @@ public class BoardPrefab : MonoBehaviour {
                 zpos *= 1.1f;
 
                 temp.transform.position = new Vector3(xpos, 0, zpos);
+                temp.name = "Panel " + i.ToString() + ", " + j.ToString();
                 row.Add(temp);
             }
             BoardTiles.Add(row);
@@ -53,10 +56,49 @@ public class BoardPrefab : MonoBehaviour {
         Renderer rend = BoardBackground.GetComponent<Renderer>();
         rend.enabled = true;
         rend.material.color = Constants.BLACKCOLOR;
+
+        //create click panels
+        BoardClickTiles = new List<List<GameObject>>();
+
+        for (int i = 0; i < mainBoard.boardSize; i++)
+        {
+            List<GameObject> row = new List<GameObject>();
+            float yprogress = (float)i / (mainBoard.boardSize - 1);
+
+            for (int j = 0; j < mainBoard.boardSize; j++)
+            {
+                GameObject temp = Instantiate(BoardClickPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+                temp.transform.SetParent(transform);
+                float wid = -((mainBoard.boardSize - 1)) * tileSize;
+                float xprogress = (float)j / (mainBoard.boardSize - 1);
+                float xpos = ((xprogress) * wid) - wid / 2.0f;
+                //xpos -= tileSize / 2;
+                xpos *= 1.1f;
+
+                float zpos = ((yprogress) * wid) - wid / 2.0f;
+                //zpos -= tileSize / 2;
+                zpos *= 1.1f;
+
+                temp.transform.position = new Vector3(xpos, 0.01f, zpos);
+                temp.name = "ClickPanel " + i.ToString() + ", " + j.ToString();
+                row.Add(temp);
+
+            }
+            BoardClickTiles.Add(row);
+        }
     }
 	
 	// Update is called once per frame
 	void Update () {
-	
-	}
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                Debug.Log(hit.transform.gameObject.name);
+
+            }
+        }
+    }
 }
