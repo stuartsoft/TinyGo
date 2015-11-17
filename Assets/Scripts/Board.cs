@@ -6,6 +6,9 @@ using System.Collections.Generic;
 public class Board {
     public List<List<Piece>> pieceMatrix;
 
+    public int boardSize {
+        get { return pieceMatrix.Count; } }
+
     public Board(int d)
     {
         pieceMatrix = new List<List<Piece>>();
