@@ -15,6 +15,8 @@ public class BoardPrefab : MonoBehaviour {
     List<GameObject> BoardPieces;
     GameObject BoardBackground;
 
+    float tileSize = 1.0f;
+
     public float tileSpacing = 0.1f;
 
 	// Use this for initialization
@@ -27,7 +29,6 @@ public class BoardPrefab : MonoBehaviour {
 
         //create regular board tiles
         BoardTiles = new List<List<GameObject>>();
-        float tileSize = 1.0f;
         for (int i = 0; i < mainBoard.boardSize-1; i++)
         {
             List<GameObject> row = new List<GameObject>();
@@ -62,6 +63,7 @@ public class BoardPrefab : MonoBehaviour {
         Renderer rend = BoardBackground.GetComponent<Renderer>();
         rend.enabled = true;
         rend.material.color = Constants.BLACKCOLOR;
+        BoardBackground.transform.parent = transform;
 
         //now create click panels, offset so that clickable panels will be right on top of the line intersections
         BoardClickTiles = new List<List<GameObject>>();
@@ -72,6 +74,7 @@ public class BoardPrefab : MonoBehaviour {
 
             for (int j = 0; j < mainBoard.boardSize; j++)
             {
+
                 GameObject temp = Instantiate(BoardClickPrefab, Vector3.zero, Quaternion.identity) as GameObject;
                 temp.transform.SetParent(transform);
                 float wid = -((mainBoard.boardSize - 1)) * tileSize;
@@ -93,8 +96,54 @@ public class BoardPrefab : MonoBehaviour {
         }
     }
 	
+    void RebuildBoard()
+    {
+        for (int i = 0; i < BoardPieces.Count; i++)
+        {
+            Destroy(BoardPieces[i]);
+        }
+        BoardPieces.Clear();
+
+        for (int i = 0; i < mainBoard.pieceMatrix.Count; i++)
+        {
+            float yprogress = (float)i / (mainBoard.boardSize - 1);
+            for (int j = 0;j<mainBoard.pieceMatrix.Count; j++)
+            {
+                if (mainBoard.pieceMatrix[i][j].color == Constants.CLEARCOLOR)
+                    continue;//skip this piece
+
+                GameObject tempPiece = Instantiate(PiecePrefab, Vector3.zero, Quaternion.identity) as GameObject;
+                tempPiece.transform.parent = transform;
+
+                float wid = -((mainBoard.boardSize - 1)) * tileSize;
+                float xprogress = (float)j / (mainBoard.boardSize - 1);
+                float xpos = ((xprogress) * wid) - wid / 2.0f;
+                //xpos -= tileSize / 2;
+                xpos *= 1.1f;
+
+                float zpos = ((yprogress) * wid) - wid / 2.0f;
+                //zpos -= tileSize / 2;
+                zpos *= 1.1f;
+
+                tempPiece.transform.position = new Vector3(xpos, 0.16f, zpos);
+                BoardPieces.Add(tempPiece);
+
+                if (mainBoard.pieceMatrix[i][j].color == Constants.WHITECOLOR) {
+                    Renderer rend = tempPiece.GetComponent<Renderer>();
+                    rend.enabled = true;
+                    rend.material.color = Constants.WHITECOLOR;
+                }
+            }
+        }
+    }
+
 	// Update is called once per frame
-	void Update () {
+	/// <summary>
+    /// 
+    /// </summary>
+    void Update () {
+        //transform.Rotate(Vector3.up, Time.deltaTime * 20);
+
         if (Input.GetMouseButtonDown(0)){
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -106,21 +155,12 @@ public class BoardPrefab : MonoBehaviour {
 
                 if (tok[0] == "ClickPanel")
                 {
-                    Debug.Log(tok[1] + ", " + tok[3]);
-                    GameObject tempPiece = Instantiate(PiecePrefab, Vector3.zero, Quaternion.identity) as GameObject;
-                    tempPiece.transform.parent = transform;
-                    tempPiece.transform.position = new Vector3(hit.transform.position.x, 0.16f, hit.transform.position.z);
-                    BoardPieces.Add(tempPiece);
-
                     if (mainBoard.CurrentTurn == 0)
                         mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.BLACKCOLOR);
                     else
-                    {
                         mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.WHITECOLOR);
-                        Renderer rend = tempPiece.GetComponent<Renderer>();
-                        rend.enabled = true;
-                        rend.material.color = Constants.WHITECOLOR;
-                    }
+                    
+                    RebuildBoard();
                 }
             }
         }
