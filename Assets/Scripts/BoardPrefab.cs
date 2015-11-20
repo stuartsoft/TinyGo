@@ -2,11 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine.UI;
 
 public class BoardPrefab : MonoBehaviour {
     public Board mainBoard;
-    public Player Player1;
-    public Player Player2;
+    Player Player1;
+    Player Player2;
     public GameObject BoardTilePrefab;
     public GameObject BoardClickPrefab;
     public GameObject PiecePrefab;
@@ -15,6 +16,9 @@ public class BoardPrefab : MonoBehaviour {
     List<GameObject> BoardPieces;
     GameObject BoardBackground;
 
+    public Text txtPlayer1Score;
+    public Text txtPlayer2Score;
+
     float tileSize = 1.0f;
 
     public float tileSpacing = 0.1f;
@@ -22,8 +26,8 @@ public class BoardPrefab : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         mainBoard = new Board(Constants.BOARDSIZE);
-        Player1 = new Player(Constants.BLACKCOLOR, mainBoard, false);
-        Player2 = new Player(Constants.WHITECOLOR, mainBoard, false);
+        Player1 = new Player(Constants.BLACKCOLOR, ref mainBoard, false);
+        Player2 = new Player(Constants.WHITECOLOR, ref mainBoard, true);
 
         BoardPieces = new List<GameObject>();
 
@@ -135,6 +139,11 @@ public class BoardPrefab : MonoBehaviour {
                 }
             }
         }
+
+        Vector2 score = mainBoard.CountPieces();
+
+        txtPlayer1Score.GetComponent<Text>().text = "B Score: " + score.x;
+        txtPlayer2Score.GetComponent<Text>().text = "W Score: " + score.y;
     }
 
 	// Update is called once per frame
@@ -143,8 +152,7 @@ public class BoardPrefab : MonoBehaviour {
     /// </summary>
     void Update () {
         //transform.Rotate(Vector3.up, Time.deltaTime * 20);
-
-        if (Input.GetMouseButtonDown(0)){
+        if (Input.GetMouseButtonDown(0) && ((mainBoard.CurrentTurn == 0 && !Player1.AI) || (mainBoard.CurrentTurn == 1 && !Player2.AI) )){
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit)){
@@ -162,6 +170,17 @@ public class BoardPrefab : MonoBehaviour {
                     
                     RebuildBoard();
                 }
+            }
+
+            if (mainBoard.CurrentTurn == 0 && Player1.AI)
+            {
+                Player1.playAI();
+                RebuildBoard();
+            }
+            else if (mainBoard.CurrentTurn == 1 && Player2.AI)
+            {
+                Player2.playAI();
+                RebuildBoard();
             }
         }
     }
