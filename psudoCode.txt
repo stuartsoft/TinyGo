@@ -1,5 +1,5 @@
-alphaBetaMin(mainboard, -(INT_MAX), +(INT_MAX), Constants.MAXDEPTH)
-alphaBetaMax(mainboard, -(INT_MAX), +(INT_MAX), Constants.MAXDEPTH)
+alphaBetaMin(mainboard, -(INT_MAX), +(INT_MAX), Constants.MAXDEPTH) //white
+alphaBetaMax(mainboard, -(INT_MAX), +(INT_MAX), Constants.MAXDEPTH) //black
 
 node alphaBetaMax(board B, int alpha, int beta, int depth ) {
 	if ( depth == 0 )//only score the board at the last iteration
@@ -57,9 +57,9 @@ node alphaBetaMin(board B, int alpha, int beta, int depth ) {
 	return n;
 }
  
- 
+
 public struct Node {
-int score;
-vector2 move;
+	public int score;
+	public vector2 move;
 }
 
