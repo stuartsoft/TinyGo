@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-
 public class Board {
     public List<List<Piece>> pieceMatrix;
     public int CurrentTurn { get; private set; }//0 for black, 1 for white
@@ -65,6 +64,23 @@ public class Board {
         return Liberties;
     }
 
+    public List<Vector2> PossibleMoves()
+    {
+        List<Vector2> PosMoves = new List<Vector2>();
+        //every spot that isn't currently occupied. Later we can optimize this
+
+        for (int i = 0;i< pieceMatrix.Count; i++)
+        {
+            for (int j = 0; j < pieceMatrix.Count; i++)
+            {
+                if (pieceMatrix[i][j].color == Constants.CLEARCOLOR)
+                    PosMoves.Add(new Vector2(i, j));
+            }
+        }
+
+        return PosMoves;
+    }
+
     public bool PlayPiece(int r, int c, Color color)
     {
         if (r > 0 && c > 0 && r < pieceMatrix.Count && c < pieceMatrix.Count)
@@ -73,6 +89,8 @@ public class Board {
             {
                 pieceMatrix[r][c] = new Piece(new Vector2(r, c), color);
                 CurrentTurn = (CurrentTurn == 0) ? 1 : 0;
+
+                //TODO: evaluate and eliminate captured pieces
                 return true;
             }
         }
@@ -99,6 +117,12 @@ public class Board {
         }
 
         return new Vector2(b, w);
+    }
+
+    public int Score()
+    {
+        Vector2 piecesCount = CountPieces();
+        return (int)piecesCount.x - (int)piecesCount.y;
     }
 
 }

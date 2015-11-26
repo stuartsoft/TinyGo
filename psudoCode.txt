@@ -1,14 +1,19 @@
+alphaBetaMin(mainboard, -(INT_MAX), +(INT_MAX), Constants.MAXDEPTH)
+alphaBetaMax(mainboard, -(INT_MAX), +(INT_MAX), Constants.MAXDEPTH)
+
 node alphaBetaMax(board B, int alpha, int beta, int depth ) {
-	if ( depth == 0 )
-		return evaluate();
+	if ( depth == 0 )//only score the board at the last iteration
+		return Score();
 
 	node n;
 	list<vector2> possible = B.possibleMoves();
 
-	for each in possible {
+	for (int i = 0;i< possible.count();i++) {
+		int x = possible[i].x;
+		int y = possible[i].y;
 		board temp = B.clone();
 		temp.PlayPiece(x,y,color);
-		score = alphaBetaMin(temp, alpha, beta, depth - 1 ).score;
+		int score = alphaBetaMin(temp, alpha, beta, depth - 1 ).score;
 		if( score >= beta ){
 			n.score = beta;
 			n.move = new Vector2(x,y);
@@ -25,15 +30,18 @@ node alphaBetaMax(board B, int alpha, int beta, int depth ) {
 }
  
 node alphaBetaMin(board B, int alpha, int beta, int depth ) {
-	if ( depth == 0 ) return -evaluate();
+	if ( depth == 0 )//only score the board at the last iteration
+		return -1 * Score();
 	
 	node n;
 	list<vector2> possible = B.possibleMoves();
 
-	for each in possible {
+	for (int i = 0;i< possible.count();i++) {
+		int x = possible[i].x;
+		int y = possible[i].y;
 		board temp = B.clone();
 		temp.PlayPiece(x,y,color);
-		score = alphaBetaMax(temp, alpha, beta, depth - 1 ).score;
+		int score = alphaBetaMax(temp, alpha, beta, depth - 1 ).score;
 		if( score <= alpha ){
 			n.score = alpha;
 			n.move = new Vector2(x,y);
@@ -50,7 +58,7 @@ node alphaBetaMin(board B, int alpha, int beta, int depth ) {
 }
  
  
-struct node {
+public struct Node {
 int score;
 vector2 move;
 }

@@ -27,7 +27,7 @@ public class BoardPrefab : MonoBehaviour {
 	void Start () {
         mainBoard = new Board(Constants.BOARDSIZE);
         Player1 = new Player(Constants.BLACKCOLOR, ref mainBoard, false);
-        Player2 = new Player(Constants.WHITECOLOR, ref mainBoard, true);
+        Player2 = new Player(Constants.WHITECOLOR, ref mainBoard, false);
 
         BoardPieces = new List<GameObject>();
 
