@@ -27,7 +27,7 @@ public class BoardPrefab : MonoBehaviour {
 	void Start () {
         mainBoard = new Board(Constants.BOARDSIZE);
         Player1 = new Player(Constants.BLACKCOLOR, ref mainBoard, false);
-        Player2 = new Player(Constants.WHITECOLOR, ref mainBoard, false);
+        Player2 = new Player(Constants.WHITECOLOR, ref mainBoard, true);
 
         BoardPieces = new List<GameObject>();
 
@@ -151,6 +151,12 @@ public class BoardPrefab : MonoBehaviour {
     /// 
     /// </summary>
     void Update () {
+        if (mainBoard.needsRefreshModel)
+        {
+            RebuildBoard();
+            mainBoard.needsRefreshModel = false;
+        }
+
         //transform.Rotate(Vector3.up, Time.deltaTime * 20);
         if (Input.GetMouseButtonDown(0) && ((mainBoard.CurrentTurn == 0 && !Player1.AI) || (mainBoard.CurrentTurn == 1 && !Player2.AI) )){
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -168,19 +174,16 @@ public class BoardPrefab : MonoBehaviour {
                     else
                         mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.WHITECOLOR);
                     
-                    RebuildBoard();
                 }
             }
 
             if (mainBoard.CurrentTurn == 0 && Player1.AI)
             {
-                Player1.playAI();
-                RebuildBoard();
+                StartCoroutine(Player1.playAI());
             }
             else if (mainBoard.CurrentTurn == 1 && Player2.AI)
             {
-                Player2.playAI();
-                RebuildBoard();
+                StartCoroutine(Player2.playAI());
             }
         }
     }

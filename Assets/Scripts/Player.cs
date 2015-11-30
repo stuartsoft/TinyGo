@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -11,33 +12,40 @@ public struct Node
 public class Player {
     public bool AI { get; private set; }
     public Color color { get; private set; }
-    public Board Board;//reference to the actual Board
+    public Board board;//reference to the actual Board
 
     public Player(Color c, ref Board b)
     {
         AI = false;
         color = c;
-        Board = b;
+        board = b;
     }
 
     public Player(Color c, ref Board b, bool isAI)
     {
         AI = isAI;
         color = c;
-        Board = b;
+        board = b;
     }
 
-    public Vector2 playAI()
+    public IEnumerator playAI()
     {
+        yield return new WaitForSeconds(1.0f);
         //run artificial intelligence here
-        
+
         //alphaBetaMin/Max call
         //use returned node.move as the position to play
 
         //call mainBoard.PlayPiece(node.move);
-        
+        Node choice;
 
-        return new Vector2(0, 0);
+        if (color == Constants.WHITECOLOR)
+            choice = alphaBetaMin(board, Int32.MinValue, Int32.MaxValue, Constants.MAXDEPTH);
+        else//black
+            choice = alphaBetaMax(board, Int32.MinValue, Int32.MaxValue, Constants.MAXDEPTH);
+        Debug.Log(choice.move);
+        board.PlayPiece((int)choice.move.x, (int)choice.move.y, color);
+        
     }
 
     Node alphaBetaMax(Board B, int alpha, int beta, int depth)
@@ -60,7 +68,7 @@ public class Player {
         {
             int x = (int)possible[i].x;
             int y = (int)possible[i].y;
-            Board temp = B.clone();
+            Board temp = B.cloneBoard();
             temp.PlayPiece(x, y, color);
             int score = alphaBetaMin(temp, alpha, beta, depth - 1).score;
             if (score >= beta)
@@ -99,7 +107,7 @@ public class Player {
         {
             int x = (int)possible[i].x;
             int y = (int)possible[i].y;
-            Board temp = B.clone();
+            Board temp = B.cloneBoard();
             temp.PlayPiece(x, y, color);
             int score = alphaBetaMax(temp, alpha, beta, depth - 1).score;
             if (score <= alpha)

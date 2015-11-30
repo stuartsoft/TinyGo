@@ -5,12 +5,14 @@ using System.Collections.Generic;
 public class Board {
     public List<List<Piece>> pieceMatrix;
     public int CurrentTurn { get; private set; }//0 for black, 1 for white
+    public bool needsRefreshModel;
 
     public int boardSize {
         get { return pieceMatrix.Count; } }
 
     public Board(int d)
     {
+        needsRefreshModel = false;
         pieceMatrix = new List<List<Piece>>();
         CurrentTurn = 0;
         for (int i = 0; i < d; i++)
@@ -71,13 +73,14 @@ public class Board {
 
         for (int i = 0;i< pieceMatrix.Count; i++)
         {
-            for (int j = 0; j < pieceMatrix.Count; i++)
+            for (int j = 0; j < pieceMatrix.Count; j++)
             {
                 if (pieceMatrix[i][j].color == Constants.CLEARCOLOR)
+                {
                     PosMoves.Add(new Vector2(i, j));
+                }
             }
         }
-
         return PosMoves;
     }
 
@@ -91,6 +94,7 @@ public class Board {
                 CurrentTurn = (CurrentTurn == 0) ? 1 : 0;
 
                 //TODO: evaluate and eliminate captured pieces
+                needsRefreshModel = true;
                 return true;
             }
         }
@@ -123,6 +127,20 @@ public class Board {
     {
         Vector2 piecesCount = CountPieces();
         return (int)piecesCount.x - (int)piecesCount.y;
+    }
+
+    public Board cloneBoard()
+    {
+        Board newBoard = new Board(boardSize);
+        for (int i = 0; i < boardSize; i++)
+        {
+            for (int j = 0; j < boardSize; j++)
+            {
+                Piece temp = new Piece(pieceMatrix[i][j].position, pieceMatrix[i][j].color);
+                newBoard.pieceMatrix[i][j] = temp;
+            }
+        }
+        return newBoard;
     }
 
 }
