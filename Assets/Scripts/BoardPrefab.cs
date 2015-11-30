@@ -163,7 +163,7 @@ public class BoardPrefab : MonoBehaviour {
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit)){
                 string GameObjName = hit.transform.gameObject.name;
-
+                //Debug.Log(GameObjName);
                 string[] delimiters = { ",", " " };
                 string[] tok = GameObjName.Split(delimiters, StringSplitOptions.None);
 
@@ -173,7 +173,6 @@ public class BoardPrefab : MonoBehaviour {
                         mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.BLACKCOLOR);
                     else
                         mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.WHITECOLOR);
-                    
                 }
             }
 

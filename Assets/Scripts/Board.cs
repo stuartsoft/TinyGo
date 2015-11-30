@@ -86,7 +86,7 @@ public class Board {
 
     public bool PlayPiece(int r, int c, Color color)
     {
-        if (r > 0 && c > 0 && r < pieceMatrix.Count && c < pieceMatrix.Count)
+        if (r >= 0 && c >= 0 && r < pieceMatrix.Count && c < pieceMatrix.Count)
         {
             if (pieceMatrix[r][c].color == Constants.CLEARCOLOR)
             {
