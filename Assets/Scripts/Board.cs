@@ -43,11 +43,32 @@ public class Board {
         return adj;
     }
 
-    public List<Piece> ConnectedPiecesDFS(int r, int c)
+    public List<Piece> ConnectedPiecesDFS(int r, int c, List<Piece> l)
     {
-        List<Piece> Conn = new List<Piece>();
+        if (l == null)
+            l = new List<Piece>();
+
+        l.Add(pieceMatrix[r][c]);
+
+        //look for adjacent pieces of the same color
+        List<Piece> adj = AdjPieces(r, c, pieceMatrix[r][c].color);
+        for (int i = 0; i < adj.Count; i++)
+        {
+            bool ShouldExplore = true;
+            for (int j = 0; j < l.Count; j++)
+            {
+                if (l[j].position == adj[i].position)
+                    ShouldExplore = false;
+            }
+
+            if (ShouldExplore) {
+                ConnectedPiecesDFS((int)adj[i].position.x, (int)adj[i].position.y, l);
+            }
+
+        }
+
         //TODO: dfs search starting from node [r][c], looking for all connected notes of the same color
-        return Conn;
+        return l;
     }
 
     public List<Piece> ConnectedGroupLiberties(List<Piece> Conn) {
