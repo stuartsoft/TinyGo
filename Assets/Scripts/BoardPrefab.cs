@@ -18,6 +18,7 @@ public class BoardPrefab : MonoBehaviour {
 
     public Text txtPlayer1Score;
     public Text txtPlayer2Score;
+    public Text txtStatus;
 
     float tileSize = 1.0f;
 
@@ -26,7 +27,7 @@ public class BoardPrefab : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         mainBoard = new Board(Constants.BOARDSIZE);
-        Player1 = new Player(Constants.BLACKCOLOR, ref mainBoard, false);
+        Player1 = new Player(Constants.BLACKCOLOR, ref mainBoard, true);
         Player2 = new Player(Constants.WHITECOLOR, ref mainBoard, true);
 
         BoardPieces = new List<GameObject>();
@@ -157,32 +158,54 @@ public class BoardPrefab : MonoBehaviour {
             mainBoard.needsRefreshModel = false;
         }
 
-        //transform.Rotate(Vector3.up, Time.deltaTime * 20);
-        if (Input.GetMouseButtonDown(0) && ((mainBoard.CurrentTurn == 0 && !Player1.AI) || (mainBoard.CurrentTurn == 1 && !Player2.AI) )){
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit)){
-                string GameObjName = hit.transform.gameObject.name;
-                //Debug.Log(GameObjName);
-                string[] delimiters = { ",", " " };
-                string[] tok = GameObjName.Split(delimiters, StringSplitOptions.None);
-
-                if (tok[0] == "ClickPanel")
+        if (mainBoard.PossibleMoves().Count == 0)
+            txtStatus.GetComponent<Text>().text = "End of Game";
+        else
+        {
+            if (Player1.AI && Player2.AI)
+            {
+                if (mainBoard.CurrentTurn == 0)
                 {
-                    if (mainBoard.CurrentTurn == 0)
-                        mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.BLACKCOLOR);
-                    else
-                        mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.WHITECOLOR);
+                    Player1.playAI();
+                }
+                else if (mainBoard.CurrentTurn == 1)
+                {
+                    Player2.playAI();
                 }
             }
+            else//else if both players are not both AI...
+            {
 
-            if (mainBoard.CurrentTurn == 0 && Player1.AI)
-            {
-                StartCoroutine(Player1.playAI());
-            }
-            else if (mainBoard.CurrentTurn == 1 && Player2.AI)
-            {
-                StartCoroutine(Player2.playAI());
+                //transform.Rotate(Vector3.up, Time.deltaTime * 20);
+                if (Input.GetMouseButtonDown(0) && ((mainBoard.CurrentTurn == 0 && !Player1.AI) || (mainBoard.CurrentTurn == 1 && !Player2.AI)))
+                {
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    RaycastHit hit;
+                    if (Physics.Raycast(ray, out hit))
+                    {
+                        string GameObjName = hit.transform.gameObject.name;
+                        //Debug.Log(GameObjName);
+                        string[] delimiters = { ",", " " };
+                        string[] tok = GameObjName.Split(delimiters, StringSplitOptions.None);
+
+                        if (tok[0] == "ClickPanel")
+                        {
+                            if (mainBoard.CurrentTurn == 0)
+                                mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.BLACKCOLOR);
+                            else
+                                mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.WHITECOLOR);
+                        }
+                    }
+
+                    if (mainBoard.CurrentTurn == 0 && Player1.AI)
+                    {
+                        Player1.playAI();
+                    }
+                    else if (mainBoard.CurrentTurn == 1 && Player2.AI)
+                    {
+                        Player2.playAI();
+                    }
+                }
             }
         }
     }

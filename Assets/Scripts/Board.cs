@@ -38,9 +38,9 @@ public class Board {
     {
 
         List<Piece> adj = new List<Piece>();
-        if ((r - 1) > 0 && pieceMatrix[r - 1][c].color == targetColor)
+        if ((r - 1) >= 0 && pieceMatrix[r - 1][c].color == targetColor)
             adj.Add(pieceMatrix[r - 1][c]);
-        if ((c - 1) > 0 && pieceMatrix[r][c - 1].color == targetColor)
+        if ((c - 1) >= 0 && pieceMatrix[r][c - 1].color == targetColor)
             adj.Add(pieceMatrix[r][c - 1]);
         if ((r + 1) < boardSize && pieceMatrix[r + 1][c].color == targetColor)
             adj.Add(pieceMatrix[r + 1][c]);

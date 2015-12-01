@@ -28,25 +28,17 @@ public class Player {
         board = b;
     }
 
-    public IEnumerator playAI()
+    public void playAI()
     {
-        yield return new WaitForSeconds(0.1f);
-        //run artificial intelligence here
-
-        //alphaBetaMin/Max call
-        //use returned node.move as the position to play
-
-        //call mainBoard.PlayPiece(node.move);
         Node choice;
 
         if (color == Constants.WHITECOLOR)
             choice = alphaBetaMin(board, Int32.MinValue, Int32.MaxValue, Constants.MAXDEPTH);
         else//black
             choice = alphaBetaMax(board, Int32.MinValue, Int32.MaxValue, Constants.MAXDEPTH);
-        Debug.Log(choice.move);
         board.PlayPiece((int)choice.move.x, (int)choice.move.y, color);
-        
     }
+
 
     Node alphaBetaMax(Board B, int alpha, int beta, int depth)//black
     {
