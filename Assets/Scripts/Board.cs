@@ -5,6 +5,13 @@ using System.Collections.Generic;
 public class Board {
     public List<List<Piece>> pieceMatrix;
     public int CurrentTurn { get; private set; }//0 for black, 1 for white
+    public Color CurrentPlayerColor {
+        get {
+            if (CurrentTurn == 0)
+                return Constants.BLACKCOLOR;
+            return Constants.WHITECOLOR;
+                }
+    }
     public bool needsRefreshModel;
 
     public int boardSize {
@@ -31,13 +38,13 @@ public class Board {
     {
 
         List<Piece> adj = new List<Piece>();
-        if (r - 1 > 0 && pieceMatrix[r - 1][c].color == targetColor)
+        if ((r - 1) > 0 && pieceMatrix[r - 1][c].color == targetColor)
             adj.Add(pieceMatrix[r - 1][c]);
-        if (c - 1 > 0 && pieceMatrix[r][c - 1].color == targetColor)
+        if ((c - 1) > 0 && pieceMatrix[r][c - 1].color == targetColor)
             adj.Add(pieceMatrix[r][c - 1]);
-        if (r + 1 > 0 && pieceMatrix[r + 1][c].color == targetColor)
+        if ((r + 1) < boardSize && pieceMatrix[r + 1][c].color == targetColor)
             adj.Add(pieceMatrix[r + 1][c]);
-        if (c + 1 > 0 && pieceMatrix[r][c + 1].color == targetColor)
+        if ((c + 1) < boardSize && pieceMatrix[r][c + 1].color == targetColor)
             adj.Add(pieceMatrix[r][c + 1]);
 
         return adj;
@@ -144,7 +151,8 @@ public class Board {
             if (pieceMatrix[r][c].color == Constants.CLEARCOLOR)
             {
                 pieceMatrix[r][c] = new Piece(new Vector2(r, c), color);
-                CurrentTurn = (CurrentTurn == 0) ? 1 : 0;
+                EnforceTheRules();
+                CurrentTurn = (CurrentTurn == 0) ? 1 : 0;//end turn, JOBS DONE
 
                 //TODO: evaluate and eliminate captured pieces
                 needsRefreshModel = true;
@@ -155,6 +163,40 @@ public class Board {
         return false;
         //Action could not be completed, either there is already a piece in the position specified,
         //or the position specified does not exist
+    }
+
+    public void EnforceTheRules()
+    {
+
+        List<List<Piece>> groups = FindAllGroups();
+
+        //remove groups with no liberties for groups of the opponent's color
+        for (int i = 0; i < groups.Count; i++)
+        {
+            if (groups[i][0].color != CurrentPlayerColor)
+            {
+                List<Piece> Libs = ConnectedGroupLiberties(groups[i]);
+                if (Libs.Count == 0)
+                {
+                    //there are no liberties left for this group! Remove all the pieces! EXTERMINATE!!!
+                    RemovePieces(groups[i]);
+                }
+            }
+        }
+
+        //remove groups with no liberties for groups of the player's color
+        for (int i = 0; i < groups.Count; i++)
+        {
+            if (groups[i][0].color == CurrentPlayerColor)
+            {
+                List<Piece> Libs = ConnectedGroupLiberties(groups[i]);
+                if (Libs.Count == 0)
+                {
+                    //there are no liberties left for this group! Remove all the pieces! EXTERMINATE!!!
+                    RemovePieces(groups[i]);
+                }
+            }
+        }
     }
 
     public Vector2 CountPieces()//returns a vector of the black pieces and white pieces 
@@ -180,6 +222,15 @@ public class Board {
     {
         Vector2 piecesCount = CountPieces();
         return (int)piecesCount.x - (int)piecesCount.y;
+    }
+
+    public void RemovePieces(List<Piece> l)
+    {
+        for (int i = 0; i < l.Count; i++)
+        {
+            pieceMatrix[(int)l[i].position.x][(int)l[i].position.y].color = Constants.CLEARCOLOR;
+        }
+        return;
     }
 
     public Board cloneBoard()
