@@ -173,6 +173,9 @@ public class BoardPrefab : MonoBehaviour {
                         mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.BLACKCOLOR);
                     else
                         mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.WHITECOLOR);
+
+                    List<List<Piece>> temp = mainBoard.FindAllGroups();
+                    Debug.Log(temp.Count);
                 }
             }
 

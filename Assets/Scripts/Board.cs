@@ -71,6 +71,38 @@ public class Board {
         return l;
     }
 
+    public List<List<Piece>> FindAllGroups()
+    {
+        List<List<Piece>> groups = new List<List<Piece>>();
+
+        for (int i = 0; i < boardSize; i++)
+        {
+            for (int j = 0; j < boardSize; j++)
+            {
+                if (pieceMatrix[i][j].color != Constants.CLEARCOLOR)
+                {
+                    bool ShouldExplore = true;
+                    for (int x=0; x < groups.Count; x++)
+                    {
+                        for(int y = 0; y < groups[x].Count; y++)
+                        {
+                            if (groups[x][y].position == pieceMatrix[i][j].position)
+                                ShouldExplore = false;
+                        }
+                    }
+
+                    if (ShouldExplore)
+                    {
+                        List<Piece> temp = ConnectedPiecesDFS(i, j, null);
+                        groups.Add(temp);
+                    }
+                }
+            }
+        }
+
+        return groups;
+    }
+
     public List<Piece> ConnectedGroupLiberties(List<Piece> Conn) {
         List<Piece> Liberties = new List<Piece>();
         for (int i = 0; i < Conn.Count; i++)
