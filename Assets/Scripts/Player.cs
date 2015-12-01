@@ -31,11 +31,56 @@ public class Player {
     public void playAI()
     {
         Node choice;
+        choice.move = Vector2.zero;
 
-        if (color == Constants.WHITECOLOR)
-            choice = alphaBetaMin(board, Int32.MinValue, Int32.MaxValue, Constants.MAXDEPTH);
-        else//black
-            choice = alphaBetaMax(board, Int32.MinValue, Int32.MaxValue, Constants.MAXDEPTH);
+        if(board.CountPieces().x + board.CountPieces().y < 3)
+        {
+            for (int i = 0; i < board.StartingMoves.Count; i++)
+            {
+                if (board.pieceMatrix[(int)board.StartingMoves[i].x][(int)board.StartingMoves[i].y].color == Constants.CLEARCOLOR)
+                {
+                    //this starting move hasn't been made yet. Take it!
+                    choice.move = board.StartingMoves[i];
+                }    
+            }
+        }
+        else//do normal ai
+        {
+            if (color == Constants.WHITECOLOR)
+                choice = alphaBetaMin(board, Int32.MinValue, Int32.MaxValue, Constants.MAXDEPTH);
+            else//black
+                choice = alphaBetaMax(board, Int32.MinValue, Int32.MaxValue, Constants.MAXDEPTH);
+        }
+
+        board.PlayPiece((int)choice.move.x, (int)choice.move.y, color);
+    }
+
+    public IEnumerator playAICoroutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        Node choice;
+        choice.move = Vector2.zero;
+
+        if (board.CountPieces().x + board.CountPieces().y < 3)
+        {
+            for (int i = 0; i < board.StartingMoves.Count; i++)
+            {
+                if (board.pieceMatrix[(int)board.StartingMoves[i].x][(int)board.StartingMoves[i].y].color == Constants.CLEARCOLOR)
+                {
+                    //this starting move hasn't been made yet. Take it!
+                    choice.move = board.StartingMoves[i];
+                }
+            }
+        }
+        else//do normal ai
+        {
+            if (color == Constants.WHITECOLOR)
+                choice = alphaBetaMin(board, Int32.MinValue, Int32.MaxValue, Constants.MAXDEPTH);
+            else//black
+                choice = alphaBetaMax(board, Int32.MinValue, Int32.MaxValue, Constants.MAXDEPTH);
+        }
+
         board.PlayPiece((int)choice.move.x, (int)choice.move.y, color);
     }
 

@@ -27,7 +27,7 @@ public class BoardPrefab : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         mainBoard = new Board(Constants.BOARDSIZE);
-        Player1 = new Player(Constants.BLACKCOLOR, ref mainBoard, true);
+        Player1 = new Player(Constants.BLACKCOLOR, ref mainBoard, false);
         Player2 = new Player(Constants.WHITECOLOR, ref mainBoard, true);
 
         BoardPieces = new List<GameObject>();
@@ -199,11 +199,11 @@ public class BoardPrefab : MonoBehaviour {
 
                     if (mainBoard.CurrentTurn == 0 && Player1.AI)
                     {
-                        Player1.playAI();
+                        StartCoroutine(Player1.playAICoroutine());
                     }
                     else if (mainBoard.CurrentTurn == 1 && Player2.AI)
                     {
-                        Player2.playAI();
+                        StartCoroutine(Player2.playAICoroutine());
                     }
                 }
             }

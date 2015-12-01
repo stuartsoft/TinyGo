@@ -14,6 +14,8 @@ public class Board {
     }
     public bool needsRefreshModel;
 
+    public List<Vector2> StartingMoves;
+
     public int boardSize {
         get { return pieceMatrix.Count; } }
 
@@ -32,6 +34,14 @@ public class Board {
             }
             pieceMatrix.Add(temp);
         }
+
+        StartingMoves = new List<Vector2>();
+        StartingMoves.Add(new Vector2(1, 1));
+        StartingMoves.Add(new Vector2(1, boardSize - 2));
+        StartingMoves.Add(new Vector2(boardSize - 2, 1));
+        StartingMoves.Add(new Vector2(boardSize - 2, boardSize - 2));
+        StartingMoves.Add(new Vector2((boardSize - 1) / 2, (boardSize - 1) / 2));
+
     }
 
     public List<Piece> AdjPieces(int r, int c, Color targetColor)
