@@ -137,7 +137,14 @@ public class Board {
             {
                 if (pieceMatrix[i][j].color == Constants.CLEARCOLOR)
                 {
-                    PosMoves.Add(new Vector2(i, j));
+                    Board tempBoard = cloneBoard();
+                    tempBoard.PlayPiece(i, j, CurrentPlayerColor);
+                    if (tempBoard.pieceMatrix[i][j].color == Constants.CLEARCOLOR)
+                    {
+                        //the piece was instantly captured, this is not a playable space
+                    }
+                    else
+                        PosMoves.Add(new Vector2(i, j));
                 }
             }
         }

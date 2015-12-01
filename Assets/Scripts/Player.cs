@@ -30,7 +30,7 @@ public class Player {
 
     public IEnumerator playAI()
     {
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(0.1f);
         //run artificial intelligence here
 
         //alphaBetaMin/Max call
@@ -48,7 +48,7 @@ public class Player {
         
     }
 
-    Node alphaBetaMax(Board B, int alpha, int beta, int depth)
+    Node alphaBetaMax(Board B, int alpha, int beta, int depth)//black
     {
         if (depth == 0)
         {//only score the Board at the last iteration
@@ -69,7 +69,7 @@ public class Player {
             int x = (int)possible[i].x;
             int y = (int)possible[i].y;
             Board temp = B.cloneBoard();
-            temp.PlayPiece(x, y, color);
+            temp.PlayPiece(x, y, Constants.BLACKCOLOR);
             int score = alphaBetaMin(temp, alpha, beta, depth - 1).score;
             if (score >= beta)
             {
@@ -87,7 +87,7 @@ public class Player {
         return n;
     }
 
-    Node alphaBetaMin(Board B, int alpha, int beta, int depth)
+    Node alphaBetaMin(Board B, int alpha, int beta, int depth)//white
     {
         if (depth == 0)//only score the Board at the last iteration
         {//only score the Board at the last iteration
@@ -108,7 +108,7 @@ public class Player {
             int x = (int)possible[i].x;
             int y = (int)possible[i].y;
             Board temp = B.cloneBoard();
-            temp.PlayPiece(x, y, color);
+            temp.PlayPiece(x, y, Constants.WHITECOLOR);
             int score = alphaBetaMax(temp, alpha, beta, depth - 1).score;
             if (score <= alpha)
             {
