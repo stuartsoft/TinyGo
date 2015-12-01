@@ -92,7 +92,7 @@ public class Player {
         if (depth == 0)//only score the Board at the last iteration
         {//only score the Board at the last iteration
             Node LeafNode;
-            LeafNode.score = -1* B.Score();
+            LeafNode.score = B.Score();
             LeafNode.move = new Vector2(0, 0);
             return LeafNode;
         }
