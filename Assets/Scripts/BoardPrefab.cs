@@ -162,9 +162,9 @@ public class BoardPrefab : MonoBehaviour {
         if (mainBoard.PossibleMovesNum == 0)
             txtStatus.GetComponent<Text>().text = "End Game";
         if (mainBoard.CurrentPlayerColor == Constants.BLACKCOLOR)
-            txtStatus.GetComponent<Text>().text = "Blacks's Turn";
+            txtStatus.GetComponent<Text>().text = "Black's Turn...";
         else if (mainBoard.CurrentPlayerColor == Constants.WHITECOLOR)
-            txtStatus.GetComponent<Text>().text = "White's Turn";
+            txtStatus.GetComponent<Text>().text = "White's Turn...";
 
         //if (mainBoard.PossibleMoves().Count == 0)
         //    txtStatus.GetComponent<Text>().text = "End of Game";

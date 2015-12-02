@@ -30,6 +30,10 @@ public class Player {
 
     public void playAI()
     {
+        int playableSpotsCount = board.PossibleMoves().Count;
+        if (playableSpotsCount == 0)
+            return;//there are no playable spots
+
         Node choice;
         choice.move = Vector2.zero;
 
@@ -53,6 +57,8 @@ public class Player {
         }
 
         board.PlayPiece((int)choice.move.x, (int)choice.move.y, color);
+
+        return;
     }
 
     public IEnumerator playAICoroutine()
