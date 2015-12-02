@@ -22,10 +22,13 @@ public class Board {
     public int boardSize {
         get { return pieceMatrix.Count; } }
 
+    public int AlphaBetaMaxDepth;
+
     public Board(int d)
     {
         PossibleMovesNum = 1;
         needsRefreshModel = false;
+        AlphaBetaMaxDepth = Constants.MAXDEPTH;
         pieceMatrix = new List<List<Piece>>();
         CurrentTurn = 0;
         for (int i = 0; i < d; i++)

@@ -51,14 +51,13 @@ public class Player {
         else//do normal ai
         {
             if (color == Constants.WHITECOLOR)
-                choice = alphaBetaMin(board, Int32.MinValue, Int32.MaxValue, Constants.MAXDEPTH);
+                choice = alphaBetaMin(board, Int32.MinValue, Int32.MaxValue, board.AlphaBetaMaxDepth);
             else//black
-                choice = alphaBetaMax(board, Int32.MinValue, Int32.MaxValue, Constants.MAXDEPTH);
+                choice = alphaBetaMax(board, Int32.MinValue, Int32.MaxValue, board.AlphaBetaMaxDepth);
         }
 
         board.PlayPiece((int)choice.move.x, (int)choice.move.y, color);
 
-        return;
     }
 
     public IEnumerator playAICoroutine()

@@ -29,7 +29,7 @@ public class BoardPrefab : MonoBehaviour {
     public Button btnPlay;
     public GameObject StartupPanel;
 
-    bool GameHasStarted;
+    bool Paused;
 
     float tileSize = 1.0f;
 
@@ -44,7 +44,7 @@ public class BoardPrefab : MonoBehaviour {
         BoardPieces = new List<GameObject>();
         txtBoardSize.GetComponent<Text>().text = "Board Size: " + Constants.BOARDSIZE + " x " + Constants.BOARDSIZE;
 
-        GameHasStarted = false;
+        Paused = false;
         CreateBoard();
     }
 	
@@ -188,12 +188,24 @@ public class BoardPrefab : MonoBehaviour {
         catch { }
     }
 
+    public void ChangeAlphaBetaDepth(Single s)
+    {
+        int newDepth = (int)s;
+        mainBoard.AlphaBetaMaxDepth = newDepth;
+        txtDepth.GetComponent<Text>().text = "AlphaBeta Exploration Depth: " + newDepth;
+    }
+
+    public void StartGame()
+    {
+
+    }
+
 	// Update is called once per frame
 	/// <summary>
     /// 
     /// </summary>
     void Update () {
-        if (!GameHasStarted)
+        if (!Paused)
             return;
 
         if (mainBoard.needsRefreshModel)
@@ -201,7 +213,6 @@ public class BoardPrefab : MonoBehaviour {
             RebuildBoard();
             mainBoard.needsRefreshModel = false;
         }
-
 
         if (mainBoard.PossibleMovesNum == 0)
             txtStatus.GetComponent<Text>().text = "End Game";
