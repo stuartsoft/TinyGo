@@ -158,55 +158,62 @@ public class BoardPrefab : MonoBehaviour {
             mainBoard.needsRefreshModel = false;
         }
 
-        if (mainBoard.PossibleMoves().Count == 0)
-            txtStatus.GetComponent<Text>().text = "End of Game";
-        else
+
+        if (mainBoard.PossibleMovesNum == 0)
+            txtStatus.GetComponent<Text>().text = "End Game";
+        if (mainBoard.CurrentPlayerColor == Constants.BLACKCOLOR)
+            txtStatus.GetComponent<Text>().text = "Blacks's Turn";
+        else if (mainBoard.CurrentPlayerColor == Constants.WHITECOLOR)
+            txtStatus.GetComponent<Text>().text = "White's Turn";
+
+        //if (mainBoard.PossibleMoves().Count == 0)
+        //    txtStatus.GetComponent<Text>().text = "End of Game";
+
+        if (Player1.AI && Player2.AI && mainBoard.PossibleMovesNum > 0)
         {
-            if (Player1.AI && Player2.AI)
+            if (mainBoard.CurrentTurn == 0)
             {
-                if (mainBoard.CurrentTurn == 0)
-                {
-                    Player1.playAI();
-                }
-                else if (mainBoard.CurrentTurn == 1)
-                {
-                    Player2.playAI();
-                }
+                Player1.playAI();
             }
-            else//else if both players are not both AI...
+            else if (mainBoard.CurrentTurn == 1)
             {
+                Player2.playAI();
+            }
+        }
+        else if (mainBoard.PossibleMovesNum > 0)//else if both players are not both AI...
+        {
 
-                //transform.Rotate(Vector3.up, Time.deltaTime * 20);
-                if (Input.GetMouseButtonDown(0) && ((mainBoard.CurrentTurn == 0 && !Player1.AI) || (mainBoard.CurrentTurn == 1 && !Player2.AI)))
+            //transform.Rotate(Vector3.up, Time.deltaTime * 20);
+            if (Input.GetMouseButtonDown(0) && ((mainBoard.CurrentTurn == 0 && !Player1.AI) || (mainBoard.CurrentTurn == 1 && !Player2.AI)))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit))
                 {
-                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    RaycastHit hit;
-                    if (Physics.Raycast(ray, out hit))
-                    {
-                        string GameObjName = hit.transform.gameObject.name;
-                        //Debug.Log(GameObjName);
-                        string[] delimiters = { ",", " " };
-                        string[] tok = GameObjName.Split(delimiters, StringSplitOptions.None);
+                    string GameObjName = hit.transform.gameObject.name;
+                    //Debug.Log(GameObjName);
+                    string[] delimiters = { ",", " " };
+                    string[] tok = GameObjName.Split(delimiters, StringSplitOptions.None);
 
-                        if (tok[0] == "ClickPanel")
-                        {
-                            if (mainBoard.CurrentTurn == 0)
-                                mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.BLACKCOLOR);
-                            else
-                                mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.WHITECOLOR);
-                        }
+                    if (tok[0] == "ClickPanel")
+                    {
+                        if (mainBoard.CurrentTurn == 0)
+                            mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.BLACKCOLOR);
+                        else
+                            mainBoard.PlayPiece(Int32.Parse(tok[1]), Int32.Parse(tok[3]), Constants.WHITECOLOR);
                     }
+                }
 
-                    if (mainBoard.CurrentTurn == 0 && Player1.AI)
-                    {
-                        StartCoroutine(Player1.playAICoroutine());
-                    }
-                    else if (mainBoard.CurrentTurn == 1 && Player2.AI)
-                    {
-                        StartCoroutine(Player2.playAICoroutine());
-                    }
+                if (mainBoard.CurrentTurn == 0 && Player1.AI)
+                {
+                    StartCoroutine(Player1.playAICoroutine());
+                }
+                else if (mainBoard.CurrentTurn == 1 && Player2.AI)
+                {
+                    StartCoroutine(Player2.playAICoroutine());
                 }
             }
         }
+        
     }
 }

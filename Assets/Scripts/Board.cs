@@ -5,6 +5,9 @@ using System.Collections.Generic;
 public class Board {
     public List<List<Piece>> pieceMatrix;
     public int CurrentTurn { get; private set; }//0 for black, 1 for white
+
+    public int PossibleMovesNum;
+
     public Color CurrentPlayerColor {
         get {
             if (CurrentTurn == 0)
@@ -21,6 +24,7 @@ public class Board {
 
     public Board(int d)
     {
+        PossibleMovesNum = 1;
         needsRefreshModel = false;
         pieceMatrix = new List<List<Piece>>();
         CurrentTurn = 0;
@@ -41,6 +45,7 @@ public class Board {
         StartingMoves.Add(new Vector2(boardSize - 2, 1));
         StartingMoves.Add(new Vector2(boardSize - 2, boardSize - 2));
         StartingMoves.Add(new Vector2((boardSize - 1) / 2, (boardSize - 1) / 2));
+
 
     }
 
@@ -92,25 +97,27 @@ public class Board {
     {
         List<List<Piece>> groups = new List<List<Piece>>();
 
+        List<List<bool>> ExploredLocations = new List<List<bool>>();
+        for (int i = 0; i < boardSize; i++)
+        {
+            List<bool> row = new List<bool>();
+            for (int j = 0; j < boardSize; j++)
+            {
+                row.Add(false);
+            }
+            ExploredLocations.Add(row);
+        }
+
         for (int i = 0; i < boardSize; i++)
         {
             for (int j = 0; j < boardSize; j++)
             {
                 if (pieceMatrix[i][j].color != Constants.CLEARCOLOR)
                 {
-                    bool ShouldExplore = true;
-                    for (int x=0; x < groups.Count; x++)
-                    {
-                        for(int y = 0; y < groups[x].Count; y++)
-                        {
-                            if (groups[x][y].position == pieceMatrix[i][j].position)
-                                ShouldExplore = false;
-                        }
-                    }
-
-                    if (ShouldExplore)
+                    if (ExploredLocations[i][j] == false)
                     {
                         List<Piece> temp = ConnectedPiecesDFS(i, j, null);
+                        ExploredLocations[i][j] = true;//record this location as having been explored
                         groups.Add(temp);
                     }
                 }
@@ -158,6 +165,7 @@ public class Board {
                 }
             }
         }
+        PossibleMovesNum = PosMoves.Count;
         return PosMoves;
     }
 
@@ -170,7 +178,6 @@ public class Board {
                 pieceMatrix[r][c] = new Piece(new Vector2(r, c), color);
                 EnforceTheRules();
                 CurrentTurn = (CurrentTurn == 0) ? 1 : 0;//end turn, JOBS DONE
-
                 //TODO: evaluate and eliminate captured pieces
                 needsRefreshModel = true;
                 return true;
