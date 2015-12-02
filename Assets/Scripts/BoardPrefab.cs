@@ -20,6 +20,17 @@ public class BoardPrefab : MonoBehaviour {
     public Text txtPlayer2Score;
     public Text txtStatus;
 
+    public Text txtBoardSize;
+    public Text txtDepth;
+    public Slider sldBoardSize;
+    public Slider sldDepth;
+    public Toggle tglBlackAI;
+    public Toggle tglWhiteAI;
+    public Button btnPlay;
+    public GameObject StartupPanel;
+
+    bool GameHasStarted;
+
     float tileSize = 1.0f;
 
     public float tileSpacing = 0.1f;
@@ -31,21 +42,34 @@ public class BoardPrefab : MonoBehaviour {
         Player2 = new Player(Constants.WHITECOLOR, ref mainBoard, true);
 
         BoardPieces = new List<GameObject>();
+        txtBoardSize.GetComponent<Text>().text = "Board Size: " + Constants.BOARDSIZE + " x " + Constants.BOARDSIZE;
+
+        GameHasStarted = false;
+        CreateBoard();
+    }
+	
+    void CreateBoard()
+    {
+        //clear out all child gameobjects
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
 
         //create regular board tiles
         BoardTiles = new List<List<GameObject>>();
-        for (int i = 0; i < mainBoard.boardSize-1; i++)
+        for (int i = 0; i < mainBoard.boardSize - 1; i++)
         {
             List<GameObject> row = new List<GameObject>();
             float yprogress = (float)i / (mainBoard.boardSize - 1);
 
-            for (int j = 0; j < mainBoard.boardSize-1; j++)
+            for (int j = 0; j < mainBoard.boardSize - 1; j++)
             {
                 GameObject temp = Instantiate(BoardTilePrefab, Vector3.zero, Quaternion.identity) as GameObject;
                 temp.transform.SetParent(transform);
-                float wid = -((mainBoard.boardSize - 1))*tileSize;
+                float wid = -((mainBoard.boardSize - 1)) * tileSize;
                 float xprogress = (float)j / (mainBoard.boardSize - 1);
-                float xpos = ((xprogress) * wid) - wid/2.0f;
+                float xpos = ((xprogress) * wid) - wid / 2.0f;
                 xpos -= tileSize / 2;
                 xpos *= 1.1f;
 
@@ -100,7 +124,7 @@ public class BoardPrefab : MonoBehaviour {
             BoardClickTiles.Add(row);
         }
     }
-	
+
     void RebuildBoard()
     {
         for (int i = 0; i < BoardPieces.Count; i++)
@@ -147,11 +171,31 @@ public class BoardPrefab : MonoBehaviour {
         txtPlayer2Score.GetComponent<Text>().text = "W Score: " + score.y;
     }
 
+    public void ChangeBoardSize(Single s)
+    {
+        try
+        {
+            int newsize = Constants.BOARDSIZE + (int)s * 2;
+            Debug.Log(newsize);
+            mainBoard = new Board(newsize);
+            Player1 = new Player(Constants.BLACKCOLOR, ref mainBoard, false);
+            Player2 = new Player(Constants.WHITECOLOR, ref mainBoard, true);
+
+            txtBoardSize.GetComponent<Text>().text = "Board Size: " + newsize + " x " + newsize;
+
+            CreateBoard();
+        }
+        catch { }
+    }
+
 	// Update is called once per frame
 	/// <summary>
     /// 
     /// </summary>
     void Update () {
+        if (!GameHasStarted)
+            return;
+
         if (mainBoard.needsRefreshModel)
         {
             RebuildBoard();
