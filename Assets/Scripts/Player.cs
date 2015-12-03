@@ -1,4 +1,11 @@
-﻿using System;
+﻿/*
+Player.cs
+This script contains information on a given player (Black/White) and also houses the actual minimax AI system.
+The minimax tree and alpha-beta pruning are operated in the functions alphaBetaMin() and alphaBetaMax(). The AI system is
+triggered by starting the IEnumerator playAI() function as a coroutine.
+*/
+
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,10 +17,10 @@ public struct Node
 }
 
 public class Player {
-    public bool AI;
+    public bool AI;//Indicates if this player is an AI
     public Color color { get; private set; }
     public Board board;//reference to the actual Board
-    public bool Playing;
+    public bool Playing;//this bool is just used to indicate if the AI is actively thinking at a given frame
 
     public Player(Color c, ref Board b)
     {
@@ -33,6 +40,7 @@ public class Player {
 
     public IEnumerator playAICoroutine()
     {
+        //Main Minimax AI starts here
         Playing = true;
         yield return new WaitForSeconds(0.1f);
         int playableSpotsCount = board.PossibleMoves().Count;
@@ -41,9 +49,15 @@ public class Player {
             Node choice;
             choice.move = Vector2.zero;
             if (color == Constants.WHITECOLOR)
+            {
+                //Start minimax tree on white's turn
                 choice = alphaBetaMin(board, Int32.MinValue, Int32.MaxValue, board.AlphaBetaMaxDepth);
-            else//black
+            }
+            else
+            {//black
+                //Start minimax tree on black's turn
                 choice = alphaBetaMax(board, Int32.MinValue, Int32.MaxValue, board.AlphaBetaMaxDepth);
+            }
 
             board.PlayPiece((int)choice.move.x, (int)choice.move.y, color);
         }

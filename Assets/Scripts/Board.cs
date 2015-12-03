@@ -1,4 +1,15 @@
-﻿using UnityEngine;
+﻿/*
+Board.cs
+This class houses the actual board data structure and also handles placing pieces on the board on behalf of the player.
+This class has a function cloneBoard() which makes it easy to deep copy for use in the minimax simulations.
+The board data structure operates independently of the BoardPrefab object, which allows for the board datastructure to be 
+cloned and simulated on.
+Board class also handles all game rules/logic and will identify groups of stones using a standard DFS search, identify stone
+liberties, and automatically remove captured pieces from the board after each turn, which is very usefull for the minimax
+system.
+*/
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 

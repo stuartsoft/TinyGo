@@ -1,4 +1,11 @@
-﻿using UnityEngine;
+﻿/*
+BoardPrefab.cs
+This is the main script from which everything is run. This script controls the board GameObject seen on screen which represents 
+the official game board datastructure in use. This script also controls the game settings UI, and triggers the AI between turns.
+*/
+
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
