@@ -239,7 +239,7 @@ public class BoardPrefab : MonoBehaviour {
 
         if (mainBoard.PossibleMovesNum == 0)
             txtStatus.GetComponent<Text>().text = "End Game";
-        if (mainBoard.CurrentPlayerColor == Constants.BLACKCOLOR)
+        else if (mainBoard.CurrentPlayerColor == Constants.BLACKCOLOR)
         {
             txtStatus.GetComponent<Text>().text = "Black's Turn...";
             if (Player1.AI)
@@ -252,6 +252,12 @@ public class BoardPrefab : MonoBehaviour {
                 txtStatus.GetComponent<Text>().text += " (Thinking)";
         }
         
+
+        if (!Player1.Playing && !Player2.Playing && mainBoard.PossibleMovesNum != 0)
+        {
+            //mainBoard.PossibleMoves();//update possible moves;
+            //Debug.Log("possible moves: " + mainBoard.PossibleMovesNum);
+        }
 
         //if (mainBoard.PossibleMoves().Count == 0)
         //    txtStatus.GetComponent<Text>().text = "End of Game";
