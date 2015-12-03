@@ -6,5 +6,5 @@ public class Constants {
     public static Color WHITECOLOR { get { return Color.white; } }
     public static Color CLEARCOLOR { get { return Color.clear; } }
     public static int BOARDSIZE = 5;
-    public static int MAXDEPTH = 5;
+    public static int MAXDEPTH = 3;
 }

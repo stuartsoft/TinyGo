@@ -10,12 +10,14 @@ public struct Node
 }
 
 public class Player {
-    public bool AI { get; private set; }
+    public bool AI;
     public Color color { get; private set; }
     public Board board;//reference to the actual Board
+    public bool Playing;
 
     public Player(Color c, ref Board b)
     {
+        Playing = false;
         AI = false;
         color = c;
         board = b;
@@ -23,50 +25,30 @@ public class Player {
 
     public Player(Color c, ref Board b, bool isAI)
     {
+        Playing = false;
         AI = isAI;
         color = c;
         board = b;
     }
 
-    public void playAI()
+    public IEnumerator playAICoroutine()
     {
+        Playing = true;
+        yield return new WaitForSeconds(0.1f);
         int playableSpotsCount = board.PossibleMoves().Count;
-        if (playableSpotsCount == 0)
-            return;//there are no playable spots
-
-        Node choice;
-        choice.move = Vector2.zero;
-
-        if(board.CountPieces().x + board.CountPieces().y < 3)
+        if (playableSpotsCount > 0)
         {
-            for (int i = 0; i < board.StartingMoves.Count; i++)
-            {
-                if (board.pieceMatrix[(int)board.StartingMoves[i].x][(int)board.StartingMoves[i].y].color == Constants.CLEARCOLOR)
-                {
-                    //this starting move hasn't been made yet. Take it!
-                    choice.move = board.StartingMoves[i];
-                }    
-            }
-        }
-        else//do normal ai
-        {
+            Node choice;
+            choice.move = Vector2.zero;
             if (color == Constants.WHITECOLOR)
                 choice = alphaBetaMin(board, Int32.MinValue, Int32.MaxValue, board.AlphaBetaMaxDepth);
             else//black
                 choice = alphaBetaMax(board, Int32.MinValue, Int32.MaxValue, board.AlphaBetaMaxDepth);
+
+            board.PlayPiece((int)choice.move.x, (int)choice.move.y, color);
         }
-
-        board.PlayPiece((int)choice.move.x, (int)choice.move.y, color);
-
+        Playing = false;
     }
-
-    public IEnumerator playAICoroutine()
-    {
-        yield return new WaitForSeconds(0.5f);
-        playAI();
-
-    }
-
 
     Node alphaBetaMax(Board B, int alpha, int beta, int depth)//black
     {

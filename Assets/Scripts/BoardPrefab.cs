@@ -28,6 +28,7 @@ public class BoardPrefab : MonoBehaviour {
     public Toggle tglWhiteAI;
     public Button btnPlay;
     public GameObject StartupPanel;
+    public GameObject mainCanvas;
 
     bool Paused;
 
@@ -44,7 +45,10 @@ public class BoardPrefab : MonoBehaviour {
         BoardPieces = new List<GameObject>();
         txtBoardSize.GetComponent<Text>().text = "Board Size: " + Constants.BOARDSIZE + " x " + Constants.BOARDSIZE;
 
-        Paused = false;
+        sldDepth.GetComponent<Slider>().value = Constants.MAXDEPTH;
+        txtDepth.GetComponent<Text>().text = "AlphaBeta Exploration Depth: " + Constants.MAXDEPTH;
+
+        PauseGame();
         CreateBoard();
     }
 	
@@ -173,19 +177,16 @@ public class BoardPrefab : MonoBehaviour {
 
     public void ChangeBoardSize(Single s)
     {
-        try
-        {
-            int newsize = Constants.BOARDSIZE + (int)s * 2;
-            Debug.Log(newsize);
-            mainBoard = new Board(newsize);
-            Player1 = new Player(Constants.BLACKCOLOR, ref mainBoard, false);
-            Player2 = new Player(Constants.WHITECOLOR, ref mainBoard, true);
+        int newsize = Constants.BOARDSIZE + (int)s * 2;
+        Debug.Log(newsize);
+        mainBoard = new Board(newsize);
+            
+        Player1 = new Player(Constants.BLACKCOLOR, ref mainBoard, tglBlackAI.GetComponent<Toggle>().isOn);
+        Player2 = new Player(Constants.WHITECOLOR, ref mainBoard, tglWhiteAI.GetComponent<Toggle>().isOn);
 
-            txtBoardSize.GetComponent<Text>().text = "Board Size: " + newsize + " x " + newsize;
+        txtBoardSize.GetComponent<Text>().text = "Board Size: " + newsize + " x " + newsize;
 
-            CreateBoard();
-        }
-        catch { }
+        CreateBoard();
     }
 
     public void ChangeAlphaBetaDepth(Single s)
@@ -195,9 +196,23 @@ public class BoardPrefab : MonoBehaviour {
         txtDepth.GetComponent<Text>().text = "AlphaBeta Exploration Depth: " + newDepth;
     }
 
-    public void StartGame()
+    public void PauseGame()
     {
+        Paused = true;
+        StartupPanel.GetComponent<RectTransform>().localPosition = new Vector3(0, 0);
+        Player1.Playing = false;
+        Player2.Playing = false;
+    }
 
+    public void unPauseGame()
+    {
+        Paused = false;
+        int width = (int)mainCanvas.GetComponent<RectTransform>().rect.width;
+        Player1.AI = tglBlackAI.GetComponent<Toggle>().isOn;
+        Player2.AI = tglWhiteAI.GetComponent<Toggle>().isOn;
+        StartupPanel.GetComponent<RectTransform>().localPosition = new Vector3(width, 0);
+        //Debug.Log(Player1.AI);
+        //Debug.Log(Player2.AI);
     }
 
 	// Update is called once per frame
@@ -205,7 +220,15 @@ public class BoardPrefab : MonoBehaviour {
     /// 
     /// </summary>
     void Update () {
-        if (!Paused)
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (Paused)
+                unPauseGame();
+            else
+                PauseGame();
+        }
+
+        if (Paused)
             return;
 
         if (mainBoard.needsRefreshModel)
@@ -217,22 +240,31 @@ public class BoardPrefab : MonoBehaviour {
         if (mainBoard.PossibleMovesNum == 0)
             txtStatus.GetComponent<Text>().text = "End Game";
         if (mainBoard.CurrentPlayerColor == Constants.BLACKCOLOR)
+        {
             txtStatus.GetComponent<Text>().text = "Black's Turn...";
+            if (Player1.AI)
+                txtStatus.GetComponent<Text>().text += " (Thinking)";
+        }
         else if (mainBoard.CurrentPlayerColor == Constants.WHITECOLOR)
+        {
             txtStatus.GetComponent<Text>().text = "White's Turn...";
+            if (Player2.AI)
+                txtStatus.GetComponent<Text>().text += " (Thinking)";
+        }
+        
 
         //if (mainBoard.PossibleMoves().Count == 0)
         //    txtStatus.GetComponent<Text>().text = "End of Game";
 
         if (Player1.AI && Player2.AI && mainBoard.PossibleMovesNum > 0)
         {
-            if (mainBoard.CurrentTurn == 0)
+            if (mainBoard.CurrentTurn == 0 && !Player1.Playing)
             {
-                Player1.playAI();
+                StartCoroutine(Player1.playAICoroutine());
             }
-            else if (mainBoard.CurrentTurn == 1)
+            else if (mainBoard.CurrentTurn == 1 && !Player2.Playing)
             {
-                Player2.playAI();
+                StartCoroutine(Player2.playAICoroutine());
             }
         }
         else if (mainBoard.PossibleMovesNum > 0)//else if both players are not both AI...
