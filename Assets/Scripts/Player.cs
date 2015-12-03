@@ -116,7 +116,7 @@ public class Player {
             {
                 n.score = alpha;
                 n.move = new Vector2(x, y);
-                return n;
+                return n;//cutoff all further nodes
             }
             if (score < beta)
             {
