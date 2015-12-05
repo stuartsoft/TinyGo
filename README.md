@@ -3,7 +3,7 @@
 
 Built from the ground up, this project aims to autonomously play the board game using a Minimax tree AI system and Alpha-Beta pruning.
 
-<p align="center"><img title="" src="https://github.com/stuartsoft/TinyGo/raw/master/sample.gif"/></p>
+<p align="center"><a href = "https://www.youtube.com/watch?v=UIWq4CaDTHU"><img title="" src="https://github.com/stuartsoft/TinyGo/raw/master/sample.gif"/></a></p>
 
 For simplicity, this game uses a modified scoring system in which the score is tabulated based on the number of pieces each player holds on the board. Grouped pieces can still be captured as in regular Go, and all stone liberties remain the same.
 
